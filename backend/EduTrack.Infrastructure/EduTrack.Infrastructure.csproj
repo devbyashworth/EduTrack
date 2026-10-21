@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Floating 10.0.* keeps EF Core on the .NET 10 line; pin exact versions after your first restore. -->
+    <!-- SQLite is used for local development, SQL Server for production (see appsettings). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EduTrack.Application\EduTrack.Application.csproj" />
+    <ProjectReference Include="..\EduTrack.Domain\EduTrack.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

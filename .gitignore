@@ -1,0 +1,44 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+coverage/
+*.log
+
+# Local SQLite development database
+*.db
+*.db-shm
+*.db-wal
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Secrets and local config: never commit these
+.env
+.env.*
+!.env.example
+appsettings.Production.json
+appsettings.Local.json
+*.pfx
+secrets.json
+
+# Playwright
+tests/e2e/test-results/
+tests/e2e/playwright-report/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+
+# Additional local databases and credentials
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+.envrc
