@@ -1,3 +1,4 @@
+
 <Project>
 
   <!-- Shared by every project in the solution. Change the framework in one place. -->
@@ -7,4 +8,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Pkcs"
+                      Version="9.0.21"
+                      Condition="'$(TargetFramework)' == 'net10.0'" />
+  </ItemGroup>
+
 </Project>
+
