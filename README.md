@@ -11,9 +11,9 @@ relational design, security, automated testing and deployment.
 | Step | State |
 | --- | --- |
 | Foundation (repo, solution, app shell, CI) | Done |
-| Database model and constraints | Written, needs first migration and a test run (see below) |
+| Database model and constraints | Written; needs your first migration and test run (see below) |
 | Business rules (grading, marks, attendance) | Done, verified |
-| Authentication and role-based access | Next |
+| Authentication and role-based access | Done: API, tests and login UI (see Verification below) |
 | Student, enrolment, gradebook, attendance workflows | Planned |
 | Dashboards, reports, end-to-end tests | Planned |
 | Deployment and demo | Planned |
@@ -60,6 +60,30 @@ npm run dev                            # http://localhost:5173, /api is proxied 
 
 To reset your local data, stop the API and delete `backend/EduTrack.Api/edutrack.dev.db*`.
 
+### Demo accounts (local development only)
+
+On first start, with an empty SQLite database, the API creates three fictional accounts, all with the password
+`Dev-Passw0rd!`: `admin@edutrack.test`, `lecturer@edutrack.test`, `student@edutrack.test`. The login page shows
+shortcut buttons for them in development builds only. They are never created outside Development.
+
+### How sign-in works
+
+- The API issues an **HttpOnly session cookie** (`edutrack.auth`). JavaScript cannot read it and nothing is kept in
+  browser storage; the app asks `GET /api/auth/me` who is signed in.
+- Every endpoint requires sign-in unless it opts out (`[AllowAnonymous]`), and role policies
+  (Administrator, Lecturer, Student, Staff) decide the rest. Hiding links in React is cosmetic only.
+- The account is re-checked on every request, so deactivating a user ends their session immediately.
+- Failed sign-ins are indistinguishable (unknown email, wrong password, deactivated), and sign-in is rate limited
+  (`Auth:LoginAttemptsPerMinute`, default 10 per client address).
+- State-changing requests must send `X-Requested-With: EduTrack` (a CSRF defence); the frontend client does this.
+
+**Known limitations**
+
+- Logging out clears the browser's cookie but does not revoke it on the server: a copied cookie keeps working until it
+  expires (8 hours). Fix before release by adding a per-user security stamp that is checked on every request and
+  changed on logout and password change.
+- There is no account lockout beyond the rate limit, and no password-change or password-reset flow yet.
+
 ### Choosing the database
 
 `Database:Provider` selects the database. `appsettings.json` says `SqlServer`, so a deployment can never silently
@@ -90,3 +114,16 @@ automatically only for SQLite in Development. SQL Server schema changes are alwa
 
 Use fictional data only. A prototype with security controls is not automatically compliant with POPIA or any
 other privacy law.
+
+## Verification
+
+Run on the build machine, which had .NET 8 but no NuGet access, so the full solution could not be compiled:
+
+| Check | Result |
+| --- | --- |
+| Real `AuthController`, auth extensions, middleware, `AuthService` compiled in a scratch host (in-memory user store) | Builds with warnings as errors |
+| 22 HTTP checks against that host: CSRF header, cookie flags, generic 401s, role matrix, deactivation, rate limit, `Secure` cookie in Production | All pass |
+| Real `GradeCalculatorTests`, `AttendanceCalculatorTests`, `AuthServiceTests` (33 tests) via a minimal xUnit stand-in | All pass |
+| 24 browser checks (real React app and that host): redirects, role navigation, session restore, sign-out, access denied, revoked session, mobile layout | All pass |
+| Frontend `npm run lint` and `npm run build` | Pass |
+| **Not run:** EF Core store, seeder, `DatabaseConstraintTests`, `AuthEndpointsTests`, `LoginRateLimitTests` | Need `dotnet test` on a machine with NuGet |

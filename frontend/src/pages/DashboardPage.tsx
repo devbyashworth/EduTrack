@@ -1,15 +1,19 @@
+import { useAuth } from '../auth/useAuth'
+
 const MILESTONES = [
   { name: 'Foundation', detail: 'Repository, API, database model, app shell', done: true },
-  { name: 'Security', detail: 'Login, roles, record-level access', done: false },
-  { name: 'Core workflows', detail: 'Students, enrolments, marks, attendance', done: false },
+  { name: 'Login and role-based access', detail: 'Sessions, roles, protected endpoints and pages', done: true },
+  { name: 'Core workflows', detail: 'Students, enrolments, marks, attendance, record-level access', done: false },
   { name: 'Quality', detail: 'Dashboards, automated and security tests', done: false },
   { name: 'Release', detail: 'Deployment, documentation, demo', done: false },
 ]
 
 export default function DashboardPage() {
+  const { user } = useAuth()
+
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Welcome, {user?.displayName}</h1>
       <p className="mt-1 text-sm text-slate-600">
         Live statistics arrive with the core workflows. This page shows build progress for now.
       </p>
