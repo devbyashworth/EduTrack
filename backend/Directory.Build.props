@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.Pkcs"
-                      Version="9.0.21"
+                      Version="10.0.15"
                       Condition="'$(TargetFramework)' == 'net10.0'" />
   </ItemGroup>
 

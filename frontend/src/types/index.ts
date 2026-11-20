@@ -5,6 +5,14 @@ export interface HealthResponse {
   database: boolean
 }
 
+/** The signed-in user, as returned by POST /api/auth/login and GET /api/auth/me. */
+export interface CurrentUser {
+  id: number
+  email: string
+  displayName: string
+  role: Role
+}
+
 export interface NavItem {
   label: string
   to: string
